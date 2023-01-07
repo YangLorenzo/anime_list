@@ -2,11 +2,11 @@
 
 ### print
 
-- anime.exe print --list
+- anime.exe print
   - stampa la lista di anime
 - anime.exe print --stats (statistic)
   - stampa la statistica di anime
-- anime.exe print --category $value
+- anime.exe print --genre $value
   - stampa la lista degli anime di un dato genere
 
 ### search
