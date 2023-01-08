@@ -1,11 +1,15 @@
+mod anime;
 mod app;
+mod csv;
 
+use anime::Anime;
 use app::App;
 use clap::Parser;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let app = App::parse();
+    let anime_list: Vec<Anime> = Vec::new();
 
+    let app = App::parse();
     match app.command() {
         app::Commands::Print => println!("Print"),
         app::Commands::Search { name } => println!("Search {}", name),
