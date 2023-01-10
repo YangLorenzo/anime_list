@@ -1,15 +1,14 @@
 mod anime;
 mod app;
-mod csv;
+mod data;
 
-use anime::Anime;
 use app::App;
 use clap::Parser;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let anime_list: Vec<Anime> = Vec::new();
-
+fn main() {
+    data::read_from_csv(&mut vec![]);
     let app = App::parse();
+
     match app.command() {
         app::Commands::Print => println!("Print"),
         app::Commands::Search { name } => println!("Search {}", name),
@@ -17,5 +16,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         app::Commands::Remove { name } => println!("Remove {}", name),
         app::Commands::Update { name } => println!("Update {}", name),
     }
-    Ok(())
 }

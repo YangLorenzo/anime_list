@@ -6,7 +6,7 @@ pub struct Anime {
     name: String,
 
     // genere, il secondo valore è opzionale
-    genre: (String, Option<String>),
+    genre: Genre,
 
     // stato dell'anime
     status: Statuses,
@@ -21,7 +21,7 @@ pub struct Anime {
 impl Anime {
     pub fn new(
         name: String,
-        genre: (String, Option<String>),
+        genre: Genre,
         status: Statuses,
         progress: Progress,
         score: u8,
@@ -39,7 +39,7 @@ impl Anime {
         &self.name
     }
 
-    pub fn genre(&self) -> &(String, Option<String>) {
+    pub fn genre(&self) -> &Genre {
         &self.genre
     }
 
@@ -56,8 +56,37 @@ impl Anime {
     }
 }
 
-// --------------------------------------------
+///
+/// Genre
+///
+pub struct Genre(String, Option<String>);
+
+impl Genre {
+    pub fn new(first: String, second: Option<String>) -> Self {
+        Self(first, second)
+    }
+
+    pub fn first(&self) -> &String {
+        &self.0
+    }
+
+    pub fn second(&self) -> &Option<String> {
+        &self.1
+    }
+}
+
+impl Display for Genre {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.1 {
+            Some(second) => write!(f, "{},{}", self.0, second),
+            None => write!(f, "{}", self.0),
+        }
+    }
+}
+
+///
 /// Progress
+///
 pub struct Progress {
     // numero di episodi visti
     episode: i32,
@@ -83,8 +112,15 @@ impl Progress {
     }
 }
 
-// --------------------------------------------
+impl Display for Progress {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{},{}", self.season, self.episode)
+    }
+}
+
+///
 /// Statuses
+///
 pub enum Statuses {
     // in corso
     Watching,
