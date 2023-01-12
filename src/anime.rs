@@ -1,21 +1,18 @@
-use std::{fmt::Display, str::FromStr};
+use std::fmt::{self};
 
 /// Anime
 pub struct Anime {
-    // nome di anime
     name: String,
 
-    // genere, il secondo valore è opzionale
     genre: Genre,
 
-    // stato dell'anime
     status: Statuses,
 
-    // progresso dell'anime
-    progress: Progress,
+    season: i32,
 
-    // punteggio dell'anime
-    score: u8,
+    episode: i32,
+
+    score: i32,
 }
 
 impl Anime {
@@ -23,14 +20,16 @@ impl Anime {
         name: String,
         genre: Genre,
         status: Statuses,
-        progress: Progress,
-        score: u8,
+        season: i32,
+        episode: i32,
+        score: i32,
     ) -> Self {
         Self {
             name,
             genre,
             status,
-            progress,
+            season,
+            episode,
             score,
         }
     }
@@ -47,80 +46,43 @@ impl Anime {
         &self.status
     }
 
-    pub fn progress(&self) -> &Progress {
-        &self.progress
+    pub fn season(&self) -> i32 {
+        self.season
     }
 
-    pub fn score(&self) -> &u8 {
-        &self.score
+    pub fn episode(&self) -> i32 {
+        self.episode
+    }
+
+    pub fn score(&self) -> i32 {
+        self.score
     }
 }
 
-///
 /// Genre
-///
-pub struct Genre(String, Option<String>);
+pub struct Genre {
+    // primo genere
+    first: String,
+    // secondo genere
+    second: Option<String>,
+}
 
 impl Genre {
     pub fn new(first: String, second: Option<String>) -> Self {
-        Self(first, second)
+        Self { first, second }
     }
 
     pub fn first(&self) -> &String {
-        &self.0
+        &self.first
     }
 
     pub fn second(&self) -> &Option<String> {
-        &self.1
+        &self.second
     }
 }
 
-impl Display for Genre {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self.1 {
-            Some(second) => write!(f, "{},{}", self.0, second),
-            None => write!(f, "{}", self.0),
-        }
-    }
-}
-
-///
-/// Progress
-///
-pub struct Progress {
-    // numero di episodi visti
-    episode: i32,
-    // stagione
-    season: i32,
-}
-
-impl Progress {
-    pub fn new(episode: i32, season: i32) -> Self {
-        if episode < 0 || season < 1 {
-            panic!("Invalid episode or season number");
-        } else {
-            Self { episode, season }
-        }
-    }
-
-    pub fn episode(&self) -> &i32 {
-        &self.episode
-    }
-
-    pub fn season(&self) -> &i32 {
-        &self.season
-    }
-}
-
-impl Display for Progress {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{},{}", self.season, self.episode)
-    }
-}
-
-///
 /// Statuses
-///
+#[derive(Debug)]
 pub enum Statuses {
     // in corso
     Watching,
@@ -138,24 +100,14 @@ pub enum Statuses {
     PlanToWatch,
 }
 
-/// Display for Statuses
-/// enum to string
-impl Display for Statuses {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Statuses::Watching => write!(f, "Watching"),
-            Statuses::Completed => write!(f, "Completed"),
-            Statuses::Dropped => write!(f, "Dropped"),
-            Statuses::OnHold => write!(f, "OnHold"),
-            Statuses::PlanToWatch => write!(f, "PlanToWatch"),
-        }
+impl fmt::Display for Statuses {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
     }
 }
 
-/// FromStr for Statuses
-/// string to enum
-impl FromStr for Statuses {
-    type Err = ();
+impl std::str::FromStr for Statuses {
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
@@ -164,7 +116,7 @@ impl FromStr for Statuses {
             "Dropped" => Ok(Statuses::Dropped),
             "OnHold" => Ok(Statuses::OnHold),
             "PlanToWatch" => Ok(Statuses::PlanToWatch),
-            _ => Err(()),
+            _ => Err(format!("{} is not a valid status", s)),
         }
     }
 }
