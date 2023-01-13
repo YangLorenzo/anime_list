@@ -6,7 +6,6 @@ use app::App;
 use clap::Parser;
 
 fn main() {
-    // data::read_from_csv(&mut vec![]);
     let app = App::parse();
 
     match app.command() {

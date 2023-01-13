@@ -98,16 +98,15 @@ mod tests {
     fn test_write() {
         let anime_list = anime::tests::create_anime_list();
         write_to_csv(&anime_list);
-
         let anime_lines = anime::tests::create_anime_lines();
 
         let file = File::open(FILE_PATH).expect("Unable to open file");
-        let mut reader = BufReader::new(file);
+        let reader = BufReader::new(file);
 
-        anime_lines.iter().for_each(|line| {
-            let mut buffer = String::new();
-            reader.read_line(&mut buffer).expect("Unable to read line");
-            assert_eq!(line, &buffer);
+        // skip header
+        reader.lines().skip(1).enumerate().for_each(|item| {
+            let (i, anime) = item;
+            assert_eq!(anime_lines[i], anime.unwrap());
         });
     }
 
@@ -120,17 +119,8 @@ mod tests {
 
         anime_list.iter().enumerate().for_each(|item| {
             let (i, a) = item;
-            let anime_line = format!(
-                "{}|{},{}|{}|{}|{}|{}",
-                a.name(),
-                a.genre().first(),
-                a.genre().second().as_deref().unwrap_or(""),
-                a.status().to_string(),
-                a.season().to_string(),
-                a.episode().to_string(),
-                a.score().to_string()
-            );
-            assert_eq!(anime_line, anime_lines[i]);
+            let anime = anime::tests::crate_anime_line_format(a);
+            assert_eq!(anime, anime_lines[i]);
         })
     }
 }

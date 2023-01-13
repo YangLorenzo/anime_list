@@ -1,17 +1,24 @@
-use std::fmt::{self};
+use std::fmt;
 
 /// Anime
+#[derive(Debug)]
 pub struct Anime {
+    // nome di anime
     name: String,
 
+    // genere
     genre: Genre,
 
+    // stato
     status: Statuses,
 
+    // stagione
     season: i32,
 
+    // episodio
     episode: i32,
 
+    // voto
     score: i32,
 }
 
@@ -60,6 +67,7 @@ impl Anime {
 }
 
 /// Genre
+#[derive(Debug)]
 pub struct Genre {
     // primo genere
     first: String,
@@ -132,27 +140,32 @@ pub mod tests {
 
         anime_list.iter().enumerate().for_each(|item| {
             let (i, a) = item;
-            let line = format!(
-                "{}|{}|{}|{}|{}|{}|{}",
-                a.name(),
-                a.genre().first(),
-                a.genre().second().as_deref().unwrap_or(""),
-                a.status(),
-                a.season(),
-                a.episode(),
-                a.score()
-            );
-            assert_eq!(line, anime_lines[i])
+            let anime_line = crate_anime_line_format(a);
+            assert_eq!(anime_line, anime_lines[i])
         });
     }
 
     // helper function
     pub fn create_anime_lines() -> Vec<String> {
         vec![
-            "anime1|Action,|1|1|1".to_string(),
-            "anime2|Action,Comedy|1|1|1".to_string(),
-            "anime3|Action,|1|1|1".to_string(),
+            "anime1|Action,|Watching|1|1|1".to_string(),
+            "anime2|Action,Comedy|Watching|1|1|1".to_string(),
+            "anime3|Action,|Watching|1|1|1".to_string(),
         ]
+    }
+
+    // helper function
+    pub fn crate_anime_line_format(a: &Anime) -> String {
+        format!(
+            "{}|{},{}|{}|{}|{}|{}",
+            a.name(),
+            a.genre().first(),
+            a.genre().second().as_deref().unwrap_or(""),
+            a.status().to_string(),
+            a.season().to_string(),
+            a.episode().to_string(),
+            a.score().to_string()
+        )
     }
 
     // helper function
