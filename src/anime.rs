@@ -120,3 +120,68 @@ impl std::str::FromStr for Statuses {
         }
     }
 }
+
+#[cfg(test)]
+pub mod tests {
+    use super::{Anime, Genre, Statuses};
+
+    #[test]
+    fn test_anime() {
+        let anime_list = create_anime_list();
+        let anime_lines = create_anime_lines();
+
+        anime_list.iter().enumerate().for_each(|item| {
+            let (i, a) = item;
+            let line = format!(
+                "{}|{}|{}|{}|{}|{}|{}",
+                a.name(),
+                a.genre().first(),
+                a.genre().second().as_deref().unwrap_or(""),
+                a.status(),
+                a.season(),
+                a.episode(),
+                a.score()
+            );
+            assert_eq!(line, anime_lines[i])
+        });
+    }
+
+    // helper function
+    pub fn create_anime_lines() -> Vec<String> {
+        vec![
+            "anime1|Action,|1|1|1".to_string(),
+            "anime2|Action,Comedy|1|1|1".to_string(),
+            "anime3|Action,|1|1|1".to_string(),
+        ]
+    }
+
+    // helper function
+    pub fn create_anime_list() -> Vec<Anime> {
+        vec![
+            Anime::new(
+                "anime1".to_string(),
+                Genre::new("Action".to_string(), None),
+                Statuses::Watching,
+                1,
+                1,
+                1,
+            ),
+            Anime::new(
+                "anime2".to_string(),
+                Genre::new("Action".to_string(), Some("Comedy".to_string())),
+                Statuses::Watching,
+                1,
+                1,
+                1,
+            ),
+            Anime::new(
+                "anime3".to_string(),
+                Genre::new("Action".to_string(), None),
+                Statuses::Watching,
+                1,
+                1,
+                1,
+            ),
+        ]
+    }
+}

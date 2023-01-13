@@ -1,6 +1,5 @@
-use std::str::FromStr;
-
 use crate::anime::{Anime, Genre, Statuses};
+use std::str::FromStr;
 
 const FILE_PATH: &str = "D:\\Yang\\Document\\Personale\\RustProjects\\anime_list\\anime_list.csv";
 const DELIMITER: u8 = b'|';
@@ -24,11 +23,7 @@ pub fn write_to_csv(anime_list: &Vec<Anime>) {
                 &format!(
                     "{},{}",
                     anime.genre().first(),
-                    if anime.genre().second().is_none() {
-                        ""
-                    } else {
-                        anime.genre().second().as_deref().unwrap()
-                    }
+                    anime.genre().second().as_deref().unwrap_or("")
                 ),
                 &anime.status().to_string(),
                 &anime.season().to_string(),
@@ -89,86 +84,53 @@ pub fn read_from_csv(anime_list: &mut Vec<Anime>) {
     }
 }
 
-///
 /// Testing
-///
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::anime;
     use std::{
         fs::File,
         io::{BufRead, BufReader},
     };
 
-    use crate::anime;
+    #[test]
+    fn test_write() {
+        let anime_list = anime::tests::create_anime_list();
+        write_to_csv(&anime_list);
 
-    use super::*;
+        let anime_lines = anime::tests::create_anime_lines();
+
+        let file = File::open(FILE_PATH).expect("Unable to open file");
+        let mut reader = BufReader::new(file);
+
+        anime_lines.iter().for_each(|line| {
+            let mut buffer = String::new();
+            reader.read_line(&mut buffer).expect("Unable to read line");
+            assert_eq!(line, &buffer);
+        });
+    }
 
     #[test]
-    fn test_read_write() {
-        let w_al = create_anime_list();
-        write_to_csv(&w_al);
-        assert!(is_equal(&w_al));
+    fn test_read() {
+        let anime_lines = anime::tests::create_anime_lines();
 
-        let mut r_al = vec![];
-        read_from_csv(&mut r_al);
-        assert!(is_equal(&r_al));
-    }
+        let mut anime_list: Vec<Anime> = Vec::new();
+        read_from_csv(&mut anime_list);
 
-    // helper function
-    fn create_anime_list<'a>() -> Vec<Anime> {
-        vec![
-            Anime::new(
-                "anime1".to_string(),
-                anime::Genre::new("Action".to_string(), None),
-                anime::Statuses::Watching,
-                1,
-                1,
-                1,
-            ),
-            Anime::new(
-                "anime2".to_string(),
-                anime::Genre::new("Action".to_string(), Some("Comedy".to_string())),
-                anime::Statuses::Watching,
-                1,
-                1,
-                1,
-            ),
-            Anime::new(
-                "anime3".to_string(),
-                anime::Genre::new("Action".to_string(), Some("Comedy".to_string())),
-                anime::Statuses::Watching,
-                1,
-                1,
-                1,
-            ),
-        ]
-    }
-
-    // helper function
-    fn is_equal(al: &Vec<Anime>) -> bool {
-        let file = File::open(FILE_PATH).expect("TESTING: Unable to open file");
-        let reader = BufReader::new(file);
-
-        // saltare header
-        for (i, line) in reader.lines().enumerate().skip(1) {
-            let i = i - 1;
+        anime_list.iter().enumerate().for_each(|item| {
+            let (i, a) = item;
             let anime_line = format!(
-                "{}|{}|{}|{}|{}|{}",
-                al[i].name(),
-                format!(
-                    "{},{}",
-                    al[i].genre().first(),
-                    al[i].genre().second().as_deref().unwrap_or("")
-                ),
-                al[i].status(),
-                al[i].season().to_string(),
-                al[i].episode().to_string(),
-                al[i].score().to_string()
+                "{}|{},{}|{}|{}|{}|{}",
+                a.name(),
+                a.genre().first(),
+                a.genre().second().as_deref().unwrap_or(""),
+                a.status().to_string(),
+                a.season().to_string(),
+                a.episode().to_string(),
+                a.score().to_string()
             );
-            if line.unwrap() != anime_line {
-                return false;
-            }
-        }
-        true
+            assert_eq!(anime_line, anime_lines[i]);
+        })
     }
 }
