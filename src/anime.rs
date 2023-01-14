@@ -1,4 +1,11 @@
-use std::fmt;
+use std::str::FromStr;
+
+use crate::data::CsvFormat;
+
+use self::{genre::Genre, statuses::Statuses};
+
+pub mod genre;
+pub mod statuses;
 
 /// Anime
 #[derive(Debug)]
@@ -66,66 +73,38 @@ impl Anime {
     }
 }
 
-/// Genre
-#[derive(Debug)]
-pub struct Genre {
-    // primo genere
-    first: String,
-    // secondo genere
-    second: Option<String>,
-}
-
-impl Genre {
-    pub fn new(first: String, second: Option<String>) -> Self {
-        Self { first, second }
+impl CsvFormat for Anime {
+    fn to_csv_line(&self) -> Vec<String> {
+        vec![
+            self.name().to_string(),
+            format!(
+                "{},{}",
+                self.genre().first(),
+                self.genre().second().as_deref().unwrap_or("")
+            ),
+            self.status().to_string(),
+            self.season().to_string(),
+            self.episode().to_string(),
+            self.score().to_string(),
+        ]
     }
 
-    pub fn first(&self) -> &String {
-        &self.first
-    }
+    fn from_csv_line(record: Vec<&str>) -> Self {
+        let name = record[0].to_string();
 
-    pub fn second(&self) -> &Option<String> {
-        &self.second
-    }
-}
+        let genre: Vec<String> = record[1].split(",").map(|s| s.to_string()).collect();
+        let genre = if genre.len() == 1 {
+            Genre::new(genre[0].clone(), None)
+        } else {
+            Genre::new(genre[0].clone(), Some(genre[1].clone()))
+        };
 
-/// Statuses
-#[derive(Debug)]
-pub enum Statuses {
-    // in corso
-    Watching,
+        let status = Statuses::from_str(record[2]).unwrap();
+        let season = record[3].parse().unwrap();
+        let episode = record[4].parse().unwrap();
+        let score = record[5].parse().unwrap();
 
-    // completato
-    Completed,
-
-    // abbandonato
-    Dropped,
-
-    // in pausa
-    OnHold,
-
-    // da vedere
-    PlanToWatch,
-}
-
-impl fmt::Display for Statuses {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
-impl std::str::FromStr for Statuses {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "Watching" => Ok(Statuses::Watching),
-            "Completed" => Ok(Statuses::Completed),
-            "Dropped" => Ok(Statuses::Dropped),
-            "OnHold" => Ok(Statuses::OnHold),
-            "PlanToWatch" => Ok(Statuses::PlanToWatch),
-            _ => Err(format!("{} is not a valid status", s)),
-        }
+        Self::new(name, genre, status, season, episode, score)
     }
 }
 

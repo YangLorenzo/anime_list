@@ -1,5 +1,10 @@
-use crate::anime::{Anime, Genre, Statuses};
-use std::str::FromStr;
+use crate::anime::Anime;
+
+/// CsvFormat
+pub trait CsvFormat {
+    fn to_csv_line(&self) -> Vec<String>;
+    fn from_csv_line(csv: Vec<&str>) -> Self;
+}
 
 const FILE_PATH: &str = "D:\\Yang\\Document\\Personale\\RustProjects\\anime_list\\anime_list.csv";
 const DELIMITER: u8 = b'|';
@@ -18,18 +23,7 @@ pub fn write_to_csv(anime_list: &Vec<Anime>) {
 
     for anime in anime_list {
         writer
-            .write_record(&[
-                anime.name(),
-                &format!(
-                    "{},{}",
-                    anime.genre().first(),
-                    anime.genre().second().as_deref().unwrap_or("")
-                ),
-                &anime.status().to_string(),
-                &anime.season().to_string(),
-                &anime.episode().to_string(),
-                &anime.score().to_string(),
-            ])
+            .write_record(anime.to_csv_line())
             .expect("Unable to write record");
     }
     writer.flush().expect("Unable to flush");
@@ -44,43 +38,9 @@ pub fn read_from_csv(anime_list: &mut Vec<Anime>) {
 
     for result in reader.records() {
         let record = result.unwrap();
+        let record = record.iter().map(|s| s).collect::<Vec<&str>>();
 
-        let name = record.get(0).expect("Unable to get name").to_string();
-
-        let genre: Vec<String> = record
-            .get(1)
-            .expect("Unable to get genre")
-            .split(",")
-            .map(|s| s.to_string())
-            .collect();
-        let genre = if genre.len() == 1 {
-            Genre::new(genre[0].clone(), None)
-        } else {
-            Genre::new(genre[0].clone(), Some(genre[1].clone()))
-        };
-
-        let status: Statuses =
-            Statuses::from_str(record.get(2).expect("Unable to get status")).unwrap();
-
-        let season = record
-            .get(3)
-            .expect("Unable to get season")
-            .parse::<i32>()
-            .unwrap();
-
-        let episode = record
-            .get(4)
-            .expect("Unable to get episode")
-            .parse::<i32>()
-            .unwrap();
-
-        let score = record
-            .get(5)
-            .expect("Unable to get score")
-            .parse::<i32>()
-            .unwrap();
-
-        anime_list.push(Anime::new(name, genre, status, season, episode, score));
+        anime_list.push(Anime::from_csv_line(record));
     }
 }
 
