@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{hash::Hash, hash::Hasher, str::FromStr};
 
 use crate::data::CsvFormat;
 
@@ -70,6 +70,20 @@ impl Anime {
 
     pub fn score(&self) -> i32 {
         self.score
+    }
+}
+
+impl PartialEq for Anime {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl Eq for Anime {}
+
+impl Hash for Anime {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
     }
 }
 

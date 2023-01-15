@@ -1,18 +1,18 @@
 mod anime;
-mod app;
+mod args;
 mod data;
 
-use app::App;
+use args::Args;
 use clap::Parser;
 
 fn main() {
-    let app = App::parse();
+    let args = Args::parse();
 
-    match app.command() {
-        app::Commands::Print => println!("Print"),
-        app::Commands::Search { name } => println!("Search {}", name),
-        app::Commands::Add { name } => println!("Add {}", name),
-        app::Commands::Remove { name } => println!("Remove {}", name),
-        app::Commands::Update { name } => println!("Update {}", name),
+    match args.command() {
+        args::Commands::Print => println!("Print"),
+        args::Commands::Search { name } => println!("Search {}", name),
+        args::Commands::Add { name } => println!("Add {}", name),
+        args::Commands::Remove { name } => println!("Remove {}", name),
+        args::Commands::Update { name } => println!("Update {}", name),
     }
 }

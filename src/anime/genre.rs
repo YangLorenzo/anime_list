@@ -1,9 +1,9 @@
 /// Genre
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub struct Genre {
     // primo genere
     first: String,
-    // secondo genere
+    // secondo genere facoltativo
     second: Option<String>,
 }
 
