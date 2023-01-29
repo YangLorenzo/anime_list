@@ -7,25 +7,18 @@ use self::{genre::Genre, statuses::Statuses};
 pub mod genre;
 pub mod statuses;
 
-/// Anime
 #[derive(Debug)]
 pub struct Anime {
-    // nome di anime
     name: String,
 
-    // genere
     genre: Genre,
 
-    // stato
     status: Statuses,
 
-    // stagione
     season: i32,
 
-    // episodio
     episode: i32,
 
-    // voto
     score: i32,
 }
 

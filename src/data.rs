@@ -1,13 +1,13 @@
 use crate::anime::Anime;
 
-/// CsvFormat
+const FILE_PATH: &str = "D:\\Yang\\Document\\Personale\\RustProjects\\anime_list\\anime_list.csv";
+
+const DELIMITER: u8 = b'|';
+
 pub trait CsvFormat {
     fn to_csv_line(&self) -> Vec<String>;
     fn from_csv_line(csv: Vec<&str>) -> Self;
 }
-
-const FILE_PATH: &str = "D:\\Yang\\Document\\Personale\\RustProjects\\anime_list\\anime_list.csv";
-const DELIMITER: u8 = b'|';
 
 pub fn write_to_csv(anime_list: &Vec<Anime>) {
     let mut writer = csv::WriterBuilder::new()
@@ -44,7 +44,6 @@ pub fn read_from_csv(anime_list: &mut Vec<Anime>) {
     }
 }
 
-/// Testing
 #[cfg(test)]
 mod tests {
     use super::*;

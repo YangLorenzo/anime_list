@@ -1,30 +1,34 @@
 ## AnimeList
 
-### print
+### anime.exe 
 
-- anime.exe print
-  - stampa la lista di anime
-- anime.exe print --stats (statistic)
-  - stampa la statistica di anime
-- anime.exe print --genre $value
-  - stampa la lista degli anime di un dato genere
+- stampa l'intera lista 
+- --genre $genre: stampa l'intera lista filtrata per $genere
+- --status $status: stampa l'intera lista filtrata per $stato
+- --rating $rating: stampa l'intera lista filtrata per $rating
+- --genre $genre --status $status --rating $rating: stampa l'intera lista filtrata per $genere, $stato e $rating
+- --order $order: stampa l'intera lista ordinata per $order
 
-### search
+### anime.exe show
 
-- anime.exe search $name
-  - cercare anime per nome
+- show $name: stampa le informazioni dell'anime data
 
-### add
+### anime.exe add
 
-- anime.exe add $name
-  - aggiungere un nuovo anime controllando prima se gia' esiste
+- add $options: aggiunge un nuovo anime
 
-### remove
+### anime.exe remove
 
-- anime.exe remove $name 
-  - rimuove anime per nome
+- remove $name: rimuove l'anime data
 
-### update
+### anime.exe update
 
-- anime.exe update $name 
-  - aggiorna le informazioni dell'anime data
+- update $name: aggiorna le informazioni dell'anime data
+
+### anime.exe watch
+
+- TODO
+
+### anime.exe unwatch
+
+- TODO

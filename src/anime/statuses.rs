@@ -1,32 +1,24 @@
 use std::fmt;
 
-/// Statuses
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum Statuses {
-    // in corso
     Watching,
 
-    // completato
     Completed,
 
-    // abbandonato
     Dropped,
 
-    // in pausa
     OnHold,
 
-    // da vedere
     PlanToWatch,
 }
 
-// conversione in stringa
 impl fmt::Display for Statuses {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
-// conversione da stringa
 impl std::str::FromStr for Statuses {
     type Err = String;
 
